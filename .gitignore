@@ -1,0 +1,9 @@
+node_modules/
+__pycache__/
+.python-version
+.venv/
+.env
+coverage.xml
+htmlcov/
+.coverage
+reports/*.json

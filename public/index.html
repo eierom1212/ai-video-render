@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>個人 AI 助理</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; background: #0b1020; color: #ecf0ff; }
+      .wrap { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+      .card { background: #151c33; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+      textarea, input { width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid #334; background: #0d1327; color: #fff; padding: 10px; }
+      textarea { min-height: 90px; }
+      button { border: none; border-radius: 8px; padding: 10px 14px; margin-right: 8px; cursor: pointer; }
+      .primary { background: #4f7cff; color: #fff; }
+      .muted { background: #2e3758; color: #fff; }
+      .danger { background: #b43d4f; color: #fff; }
+      .log { white-space: pre-wrap; background: #0b1327; border-radius: 10px; padding: 12px; min-height: 120px; }
+      .row { display: flex; gap: 8px; flex-wrap: wrap; }
+      .small { font-size: 13px; color: #bec8ff; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>個人 AI 助理（本機可用）</h1>
+
+      <div class="card">
+        <div class="small">狀態</div>
+        <div id="providerStatus" class="log">載入中...</div>
+        <button class="muted" id="refreshStatusBtn">重新檢查模型</button>
+      </div>
+
+      <div class="card">
+        <label>你的訊息</label>
+        <textarea id="message" placeholder="例如：幫我安排今天 2 小時的學習計劃"></textarea>
+        <div class="row" style="margin-top: 10px;">
+          <button class="primary" id="sendBtn">送出</button>
+          <button class="muted" id="evolveBtn">手動進化</button>
+          <button class="danger" id="resetBtn">重設助理</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="small">回覆</div>
+        <div id="reply" class="log"></div>
+      </div>
+
+      <div class="card">
+        <div class="small">這次回覆評分（1 最差，5 最好）</div>
+        <div class="row" id="ratingRow"></div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

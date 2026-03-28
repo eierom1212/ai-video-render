@@ -16,6 +16,21 @@ npm start
 
 開啟：<http://localhost:3000>
 
+### Windows 使用者（重要）
+
+你遇到的 `ENOENT` 代表你目前在 `C:\\Users\\User`，不是專案資料夾。  
+請先切到專案目錄再執行 `npm`：
+
+```bat
+cd /d D:\你的路徑\ai-video-render
+dir package.json
+npm install
+copy .env.example .env
+npm start
+```
+
+如果你不想手動打指令，可直接雙擊 `setup-local.bat`（已附在專案根目錄）。
+
 ## 2. 建議的個人電腦配置（免費）
 
 1) 安裝 Ollama：<https://ollama.com>
@@ -78,3 +93,17 @@ curl -X POST http://localhost:3000/assistant/import \
 - 進化後下次對話會優先選擇平均分較高的變體
 
 > 這是穩健的「行為層進化」，不會自動改動程式碼，避免把系統玩壞。
+
+## 7. 常見錯誤排除（Windows）
+
+### 錯誤 1：`npm ERR! enoent Could not read package.json`
+原因：你不在專案目錄。  
+解法：先 `cd` 到有 `package.json` 的資料夾再執行 `npm`。
+
+### 錯誤 2：`'cp' 不是內部或外部命令`
+原因：`cp` 是 Linux/macOS 指令。  
+解法：在 Windows CMD 改用：
+
+```bat
+copy .env.example .env
+```

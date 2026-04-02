@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 cd /d "%~dp0\.."
 
 if not exist backups mkdir backups
@@ -14,4 +14,15 @@ if errorlevel 1 (
 )
 
 echo [OK] Backup created: %FILE%
+
+REM Retention policy: keep latest 8 backups, delete older files.
+set /a COUNT=0
+for /f "delims=" %%f in ('dir /b /a:-d /o-d "backups\assistant-backup-*.json" 2^>nul') do (
+  set /a COUNT+=1
+  if !COUNT! GTR 8 (
+    del /q "backups\%%f"
+    echo [CLEANUP] Deleted old backup: %%f
+  )
+)
+
 endlocal

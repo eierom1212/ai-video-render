@@ -136,3 +136,7 @@ install-startup.bat
 cd /d 你的專案路徑\windows-startup
 schedule-weekly-backup.bat
 ```
+
+備份保留策略（已內建）：
+- `backup-state.bat` 每次備份後會自動清理舊檔
+- 預設只保留最新 **8** 份 `assistant-backup-*.json`

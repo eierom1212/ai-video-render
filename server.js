@@ -12,6 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dataDir = path.join(__dirname, 'data');
 const statePath = path.join(dataDir, 'assistant-state.json');
+const profilePath = path.join(dataDir, 'assistant-profile.json');
 
 const app = express();
 app.use(cors());
@@ -39,12 +40,25 @@ const DEFAULT_STATE = {
   }
 };
 
+const DEFAULT_PROFILE = {
+  name: 'personal-default',
+  updatedAt: new Date().toISOString(),
+  instruction:
+    '回答格式固定為：\\n1) 先給一句結論\\n2) 再給 3-5 個可執行步驟\\n3) 最後給「今天立刻可做」的 checklist。\\n語氣：簡潔、務實、避免空話。'
+};
+
 async function ensureState() {
   await fs.mkdir(dataDir, { recursive: true });
   try {
     await fs.access(statePath);
   } catch {
     await fs.writeFile(statePath, JSON.stringify(DEFAULT_STATE, null, 2), 'utf-8');
+  }
+
+  try {
+    await fs.access(profilePath);
+  } catch {
+    await fs.writeFile(profilePath, JSON.stringify(DEFAULT_PROFILE, null, 2), 'utf-8');
   }
 }
 
@@ -56,6 +70,16 @@ async function loadState() {
 
 async function saveState(state) {
   await fs.writeFile(statePath, JSON.stringify(state, null, 2), 'utf-8');
+}
+
+async function loadProfile() {
+  await ensureState();
+  const raw = await fs.readFile(profilePath, 'utf-8');
+  return JSON.parse(raw);
+}
+
+async function saveProfile(profile) {
+  await fs.writeFile(profilePath, JSON.stringify(profile, null, 2), 'utf-8');
 }
 
 function selectPromptVariant(state) {
@@ -172,12 +196,16 @@ async function chatWithOpenRouter(messages) {
 }
 
 async function generateAssistantReply(systemPrompt, memories, message) {
+  const profile = await loadProfile();
+  const profileInstruction = profile?.instruction
+    ? `\\n\\n使用者指定回答模板：\\n${profile.instruction}`
+    : '';
   const memoryBlock = memories.length
     ? `\n以下是使用者歷史偏好，請納入回覆：\n- ${memories.join('\n- ')}`
     : '';
 
   const messages = [
-    { role: 'system', content: systemPrompt + memoryBlock },
+    { role: 'system', content: systemPrompt + profileInstruction + memoryBlock },
     { role: 'user', content: message }
   ];
 
@@ -390,6 +418,26 @@ app.get('/assistant/state', async (_, res) => {
       createdAt
     }))
   });
+});
+
+app.get('/assistant/profile', async (_, res) => {
+  const profile = await loadProfile();
+  res.json(profile);
+});
+
+app.post('/assistant/profile', async (req, res) => {
+  const { instruction } = req.body;
+  if (!instruction || typeof instruction !== 'string') {
+    return res.status(400).json({ error: '請提供 instruction 字串' });
+  }
+
+  const next = {
+    name: 'personal-default',
+    updatedAt: new Date().toISOString(),
+    instruction: instruction.slice(0, 3000)
+  };
+  await saveProfile(next);
+  return res.json({ ok: true, profile: next });
 });
 
 app.get('/assistant/export', async (_, res) => {

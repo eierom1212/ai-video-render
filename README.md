@@ -5,6 +5,8 @@
 - 雲端備援：可選 OpenRouter free model
 - 完全離線保底：模型掛掉仍能給策略回覆
 - 有本地網頁介面：直接在瀏覽器聊天、評分、進化、重設
+- 可自訂回答模板：你可以指定固定回覆格式（結論 → 步驟 → checklist）
+- 可設為開機自動啟動（Windows）
 
 ## 1. 安裝與啟動
 
@@ -68,6 +70,8 @@ PORT=3000
 - `POST /assistant/feedback`
 - `POST /assistant/evolve`
 - `GET /assistant/state`
+- `GET /assistant/profile`
+- `POST /assistant/profile`
 - `GET /assistant/export`（匯出 JSON）
 - `POST /assistant/import`（匯入 JSON）
 - `POST /assistant/reset`
@@ -106,4 +110,21 @@ curl -X POST http://localhost:3000/assistant/import \
 
 ```bat
 copy .env.example .env
+```
+
+## 8. 自訂你的回答模板（你剛剛要的第 2 點）
+
+在網頁最下方有「專屬回答模板（可自訂）」區塊，輸入後按「儲存模板」。  
+之後所有回答都會套用這份模板（例如：先結論，再 3-5 步驟，最後 checklist）。
+
+## 9. 開機自動啟動（你剛剛要的第 1 點）
+
+專案已附：
+- `windows-startup/run-assistant.bat`：啟動 Ollama、Node 服務、並開瀏覽器
+- `windows-startup/install-startup.bat`：把啟動捷徑放進 Windows Startup
+
+操作：
+```bat
+cd /d 你的專案路徑\windows-startup
+install-startup.bat
 ```

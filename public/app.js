@@ -6,6 +6,8 @@ const ratingRow = document.getElementById('ratingRow');
 const evolveBtn = document.getElementById('evolveBtn');
 const resetBtn = document.getElementById('resetBtn');
 const refreshStatusBtn = document.getElementById('refreshStatusBtn');
+const profileInstruction = document.getElementById('profileInstruction');
+const saveProfileBtn = document.getElementById('saveProfileBtn');
 
 let lastConversationId = null;
 
@@ -27,6 +29,15 @@ async function refreshProviders() {
     providerStatus.textContent = JSON.stringify(data, null, 2);
   } catch (err) {
     providerStatus.textContent = `檢查失敗: ${err.message}`;
+  }
+}
+
+async function loadProfile() {
+  try {
+    const data = await api('/assistant/profile');
+    profileInstruction.value = data.instruction || '';
+  } catch (err) {
+    console.error('loadProfile error', err);
   }
 }
 
@@ -104,6 +115,23 @@ resetBtn.onclick = async () => {
 };
 
 refreshStatusBtn.onclick = refreshProviders;
+saveProfileBtn.onclick = async () => {
+  const instruction = profileInstruction.value.trim();
+  if (!instruction) {
+    alert('模板不可為空');
+    return;
+  }
+  try {
+    await api('/assistant/profile', {
+      method: 'POST',
+      body: JSON.stringify({ instruction })
+    });
+    alert('已儲存回答模板');
+  } catch (err) {
+    alert(`儲存失敗: ${err.message}`);
+  }
+};
 
 renderRatingButtons();
 refreshProviders();
+loadProfile();

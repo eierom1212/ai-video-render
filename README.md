@@ -120,11 +120,19 @@ copy .env.example .env
 ## 9. 開機自動啟動（你剛剛要的第 1 點）
 
 專案已附：
-- `windows-startup/run-assistant.bat`：啟動 Ollama、Node 服務、並開瀏覽器
+- `windows-startup/run-assistant.bat`：啟動 Ollama、Node 服務、並開瀏覽器（已含防重複啟動）
 - `windows-startup/install-startup.bat`：把啟動捷徑放進 Windows Startup
+- `windows-startup/backup-state.bat`：手動執行一次狀態備份
+- `windows-startup/schedule-weekly-backup.bat`：建立每週日 21:00 自動備份排程
 
 操作：
 ```bat
 cd /d 你的專案路徑\windows-startup
 install-startup.bat
+```
+
+建立每週備份排程：
+```bat
+cd /d 你的專案路徑\windows-startup
+schedule-weekly-backup.bat
 ```
